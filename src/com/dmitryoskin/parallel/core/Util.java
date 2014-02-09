@@ -1,14 +1,20 @@
 package com.dmitryoskin.parallel.core;
 
+import com.dmitryoskin.parallel.parser.Parsers;
+
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.FileAttribute;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -27,7 +33,8 @@ public class Util {
     private static final String TESTS_PATH = "tests-dir";
     private static final String RESULTS_PATH = "results-dir";
     private static final String DEPLOY_PATH = "deploy-dir";
-	
+    private static final String GRAPH_PATH = "graph-dir";
+
 	private static SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
 
     private static Properties props;
@@ -66,6 +73,10 @@ public class Util {
 
     public static String getDeployPath() {
         return get(DEPLOY_PATH);
+    }
+
+    public static String getGraphPath() {
+        return get(GRAPH_PATH);
     }
 
     public static void saveUserSet(UserSet set) throws Exception {
@@ -144,5 +155,28 @@ public class Util {
         } catch(IOException ex) {
                 System.out.println(ex.getMessage());
         }
+    }
+
+    public static void parseAndSaveData(Path path) throws IOException {
+        Map<Param, String> result = Parsers.parse(path);
+
+        Path parent = path.getParent();
+        String fileName = path.getFileName().toString();
+
+        Path resultFile = parent.resolve(fileName.substring(0, fileName.lastIndexOf('_')).concat(".prf"));
+        if (Files.exists(resultFile, LinkOption.NOFOLLOW_LINKS)) {
+            Files.delete(resultFile);
+        }
+
+        Files.createFile(resultFile);
+
+        PrintWriter out = new PrintWriter(
+                Files.newBufferedWriter(resultFile, Charset.forName("UTF-8"), StandardOpenOption.WRITE));
+        for (Map.Entry<Param, String> entry : result.entrySet()) {
+            out.println(entry.getKey().getName() + "=" + entry.getValue());
+        }
+
+        out.flush();
+        out.close();
     }
 }

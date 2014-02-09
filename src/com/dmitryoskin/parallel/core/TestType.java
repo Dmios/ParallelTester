@@ -10,7 +10,11 @@ public enum TestType {
     
     OSU,
     
-    SKAMPI
+    SKAMPI;
+
+    public String getName() {
+        return name().toLowerCase();
+    }
     
     
 }

@@ -3,32 +3,29 @@ package com.dmitryoskin.parallel.forms;
 import com.dmitryoskin.parallel.core.TestType;
 import com.dmitryoskin.parallel.core.UserSet;
 import com.dmitryoskin.parallel.core.Util;
+import com.dmitryoskin.parallel.parser.Parsers;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
-import java.net.Inet4Address;
-import java.net.InetAddress;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.text.ParseException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Scanner;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.SwingWorker;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.filechooser.*;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 /**
  *
@@ -55,21 +52,21 @@ public class Main extends javax.swing.JFrame {
 
             processCountSpn.setValue(set.getProcessCount());
 
-            File testsDir = new File(Util.getTestsPath());
-            File[] dirs = testsDir.listFiles();
-            Arrays.sort(dirs, new Comparator<File>() {
-                @Override
-                public int compare(File o1, File o2) {
-                    return o1.getName().compareTo(o2.getName());
-                }
-            
-            });
-            
-            for (File testDir : dirs) {
-                if (testDir.isDirectory()) {
-                    cmbTestType.addItem(testDir.getName());
-                }
-            }
+//            File testsDir = new File(Util.getTestsPath());
+//            File[] dirs = testsDir.listFiles();
+//            Arrays.sort(dirs, new Comparator<File>() {
+//                @Override
+//                public int compare(File o1, File o2) {
+//                    return o1.getName().compareTo(o2.getName());
+//                }
+//            
+//            });
+//            
+//            for (File testDir : dirs) {
+//                if (testDir.isDirectory()) {
+//                    cmbTestType.addItem(testDir.getName());
+//                }
+//            }
 
             hostsTable.getModel().addTableModelListener(new TableModelListener() {
                 @Override
@@ -204,6 +201,7 @@ public class Main extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
+        chooseFileMenuItem = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -391,6 +389,16 @@ public class Main extends javax.swing.JFrame {
 
         jMenu1.setText("Файл");
 
+        chooseFileMenuItem.setText("Выбрать файл(ы)");
+        jMenu1.add(chooseFileMenuItem);
+
+        chooseFileMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                chooseFileMenuItemActionPerformed(e);
+            }
+        });
+
         jMenuItem1.setText("Выход");
         jMenu1.add(jMenuItem1);
 
@@ -403,6 +411,45 @@ public class Main extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void chooseFileMenuItemActionPerformed(ActionEvent e) {
+        JFileChooser chooser = new JFileChooser(Util.getResultsPath());
+        chooser.setMultiSelectionEnabled(true);
+        chooser.setFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                return !f.getName().endsWith(".prf");
+            }
+
+            @Override
+            public String getDescription() {
+                return "Файлы результатов тестирования";
+            }
+        });
+
+        if (chooser.showDialog(this, "Ок") == JFileChooser.APPROVE_OPTION) {
+            boolean success = true;
+
+            File[] files = chooser.getSelectedFiles();
+            for (File file : files) {
+                try {
+                    Util.parseAndSaveData(file.toPath());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    success = false;
+                    JOptionPane.showMessageDialog(this,
+                            "Ошибка при разборе файла " + file.getName(),
+                            "Ошибка", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+
+            if (success) {
+                JOptionPane.showMessageDialog(this,
+                        "Файлы обработаны успешно",
+                        "Результат", JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+    }
 
     private void cmbTestTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbTestTypeActionPerformed
         chosenTestCmb.removeAllItems();  
@@ -619,6 +666,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem chooseFileMenuItem;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
