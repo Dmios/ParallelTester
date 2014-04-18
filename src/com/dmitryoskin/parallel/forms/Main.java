@@ -3,10 +3,12 @@ package com.dmitryoskin.parallel.forms;
 import com.dmitryoskin.parallel.core.TestType;
 import com.dmitryoskin.parallel.core.UserSet;
 import com.dmitryoskin.parallel.core.Util;
-import com.dmitryoskin.parallel.parser.Parsers;
 
+import javax.swing.*;
+import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -19,13 +21,6 @@ import java.util.Scanner;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.*;
-import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.filechooser.*;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -68,12 +63,7 @@ public class Main extends javax.swing.JFrame {
 //                }
 //            }
 
-            hostsTable.getModel().addTableModelListener(new TableModelListener() {
-                @Override
-                public void tableChanged(TableModelEvent e) {
-                    saveUserSetBtn.setEnabled(true);
-                }
-            });
+            hostsTable.getModel().addTableModelListener(e -> saveUserSetBtn.setEnabled(true));
 
             saveUserSetBtn.setEnabled(false);
         } catch (Exception ex) {
@@ -216,19 +206,11 @@ public class Main extends javax.swing.JFrame {
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
         addHostBtn.setText("+");
-        addHostBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addHostBtnActionPerformed(evt);
-            }
-        });
+        addHostBtn.addActionListener(this::addHostBtnActionPerformed);
         jPanel1.add(addHostBtn);
 
         removeHostBtn.setText("-");
-        removeHostBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                removeHostBtnActionPerformed(evt);
-            }
-        });
+        removeHostBtn.addActionListener(this::removeHostBtnActionPerformed);
         jPanel1.add(removeHostBtn);
 
         jScrollPane1.setBorder(null);
@@ -273,19 +255,11 @@ public class Main extends javax.swing.JFrame {
         jPanel3.add(jLabel2);
 
         cmbTestType.setPreferredSize(new java.awt.Dimension(150, 30));
-        cmbTestType.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmbTestTypeActionPerformed(evt);
-            }
-        });
+        cmbTestType.addActionListener(this::cmbTestTypeActionPerformed);
         jPanel3.add(cmbTestType);
 
         chosenTestCmb.setPreferredSize(new java.awt.Dimension(300, 30));
-        chosenTestCmb.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                chosenTestCmbActionPerformed(evt);
-            }
-        });
+        chosenTestCmb.addActionListener(this::chosenTestCmbActionPerformed);
         jPanel3.add(chosenTestCmb);
 
         jPanel2.add(jPanel3, java.awt.BorderLayout.NORTH);
@@ -320,11 +294,7 @@ public class Main extends javax.swing.JFrame {
 
         processCountSpn.setPreferredSize(new java.awt.Dimension(50, 20));
         processCountSpn.setValue(1);
-        processCountSpn.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                processCountSpnStateChanged(evt);
-            }
-        });
+        processCountSpn.addChangeListener(this::processCountSpnStateChanged);
         jPanel6.add(processCountSpn);
 
         jPanel5.add(jPanel6, java.awt.BorderLayout.NORTH);
@@ -332,19 +302,11 @@ public class Main extends javax.swing.JFrame {
         jPanel8.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
         startTestBtn.setText("Запустить тест");
-        startTestBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                startTestBtnActionPerformed(evt);
-            }
-        });
+        startTestBtn.addActionListener(this::startTestBtnActionPerformed);
         jPanel8.add(startTestBtn);
 
         saveUserSetBtn.setText("Сохранить настройки");
-        saveUserSetBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveUserSetBtnActionPerformed(evt);
-            }
-        });
+        saveUserSetBtn.addActionListener(this::saveUserSetBtnActionPerformed);
         jPanel8.add(saveUserSetBtn);
 
         jPanel5.add(jPanel8, java.awt.BorderLayout.SOUTH);
@@ -366,11 +328,7 @@ public class Main extends javax.swing.JFrame {
         jPanel9.add(jScrollPane3);
 
         sshConfigBtn.setText("SSH конфигурация");
-        sshConfigBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sshConfigBtnActionPerformed(evt);
-            }
-        });
+        sshConfigBtn.addActionListener(this::sshConfigBtnActionPerformed);
         jPanel9.add(sshConfigBtn);
         sshConfigBtn.getAccessibleContext().setAccessibleDescription("");
 
@@ -392,12 +350,7 @@ public class Main extends javax.swing.JFrame {
         chooseFileMenuItem.setText("Выбрать файл(ы)");
         jMenu1.add(chooseFileMenuItem);
 
-        chooseFileMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                chooseFileMenuItemActionPerformed(e);
-            }
-        });
+        chooseFileMenuItem.addActionListener(this::chooseFileMenuItemActionPerformed);
 
         jMenuItem1.setText("Выход");
         jMenu1.add(jMenuItem1);
@@ -451,14 +404,13 @@ public class Main extends javax.swing.JFrame {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void cmbTestTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbTestTypeActionPerformed
         chosenTestCmb.removeAllItems();  
         Path dir = getTestMetaFile(TEST_LIST_META_FILE);
         try {
             List<String> tests = Files.readAllLines(dir, Charset.forName("UTF-8"));
-            for (String test : tests) {
-                chosenTestCmb.addItem(test);
-            }
+            tests.forEach(chosenTestCmb::addItem);
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }                
@@ -640,19 +592,9 @@ public class Main extends javax.swing.JFrame {
         } catch (Exception ex) {
             java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new Main().setVisible(true);
-            }
-        });
+        java.awt.EventQueue.invokeLater(() -> new Main().setVisible(true));
     }
-    private static FilenameFilter DESCRIPTION_FILTER = new FilenameFilter() {
-        @Override
-        public boolean accept(File dir, String name) {
-            return "description.txt".equals(name);
-        }
-    };
+    private static FilenameFilter DESCRIPTION_FILTER = (dir, name) -> "description.txt".equals(name);
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addHostBtn;
     private javax.swing.JComboBox chosenTestCmb;

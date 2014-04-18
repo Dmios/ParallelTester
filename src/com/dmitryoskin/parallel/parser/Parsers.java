@@ -1,7 +1,6 @@
 package com.dmitryoskin.parallel.parser;
 
 import com.dmitryoskin.parallel.core.Param;
-import com.dmitryoskin.parallel.core.TestType;
 import com.dmitryoskin.parallel.parser.osu.OsuResultParser;
 import com.dmitryoskin.parallel.parser.scalapack.ScalapackResultParser;
 import com.dmitryoskin.parallel.parser.skampi.SkampiResultParser;
@@ -12,9 +11,7 @@ import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.util.Map;
 
-import static com.dmitryoskin.parallel.core.TestType.SCALAPACK;
-import static com.dmitryoskin.parallel.core.TestType.OSU;
-import static com.dmitryoskin.parallel.core.TestType.SKAMPI;
+import static com.dmitryoskin.parallel.core.TestType.*;
 
 /**
  * @author Dmitry Oskin

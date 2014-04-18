@@ -4,21 +4,12 @@ import com.dmitryoskin.parallel.parser.Parsers;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.OpenOption;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.nio.file.attribute.FileAttribute;
-import java.text.DateFormat;
+import java.nio.file.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -52,7 +43,7 @@ public class Util {
                 System.out.println(ex.getMessage());
             }
         }
-        return (String)props.getProperty(propertyName);
+        return props.getProperty(propertyName);
     }
 
     public static String getSmpdPath() {

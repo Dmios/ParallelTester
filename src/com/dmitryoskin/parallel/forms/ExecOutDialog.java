@@ -134,11 +134,7 @@ public class ExecOutDialog extends javax.swing.JDialog {
         jPanel3.setPreferredSize(new java.awt.Dimension(350, 40));
 
         copyBtn.setText("Скопировать");
-        copyBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                copyBtnActionPerformed(evt);
-            }
-        });
+        copyBtn.addActionListener(this::copyBtnActionPerformed);
         jPanel3.add(copyBtn);
 
         jPanel1.add(jPanel3);

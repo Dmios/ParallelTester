@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -18,7 +17,7 @@ public class UserSet implements Serializable {
 
 	private int processCount = 1;
 
-	private transient Map<String, Boolean> hosts = new LinkedHashMap<String, Boolean>();
+	private transient Map<String, Boolean> hosts = new LinkedHashMap<>();
 
 
 	private void writeObject(ObjectOutputStream out) throws IOException {
@@ -34,7 +33,7 @@ public class UserSet implements Serializable {
 	private void readObject(ObjectInputStream in) throws Exception {
 		in.defaultReadObject();
 
-		hosts = new LinkedHashMap<String, Boolean>();
+		hosts = new LinkedHashMap<>();
 
 		int hostsCount = in.readInt();
 		for (int i = 0; i < hostsCount; i++) {
