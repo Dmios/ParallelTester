@@ -20,6 +20,13 @@ public interface ResultParser {
     int PROCESS_COUNT_INDEX = 5;
     int JVM_TIME_INDEX = 5;
 
-    Map<Param, String> parse(Path input) throws IOException;
+    String WARMUP = "Warming Up...";
+    String END_OF_TEST = "Test complete";
+    String CONFIGURATION = "Ran test configuration";
+    String TOTAL_TIME = "Total execution time";
+
+    String SPACES = "\\s+";
+
+    Map<String, String> parse(Path input) throws IOException;
     
 }

@@ -19,7 +19,7 @@ import static com.dmitryoskin.parallel.core.TestType.*;
  */
 public class Parsers {
 
-    public static Map<Param, String> parse(Path input) throws IOException {
+    public static Map<String, String> parse(Path input) throws IOException {
         if (!Files.exists(input, LinkOption.NOFOLLOW_LINKS)) throw new IllegalArgumentException("File not found!");
 
         String path = input.toString().toLowerCase();

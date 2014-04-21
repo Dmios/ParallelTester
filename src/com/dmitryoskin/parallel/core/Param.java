@@ -4,29 +4,21 @@ package com.dmitryoskin.parallel.core;
  * @author Dmitry Oskin
  * @version 1.0
  */
-public enum Param {
+public interface Param {
 
     /** Common */
-    PROCESS_COUNT("process-count"),
-    JVM_TIME("jvm-time"),
+    String PROCESS_COUNT = "process-count";
+    String JVM_TIME ="jvm-time";
+    String TEST_NAME = "test-name";
 
     /** Scalapack base test */
-    WALL_CLOCK("wall-clock")
+    String SP_WALL_CLOCK = "wall-clock";
 
-    ;
+    /** OSU */
+    String OSU_PACKET_SIZE = "size";
+    String OSU_LATENCY = "latency";
 
-    private String name;
 
-    Param(String name) {
-        this.name = name;
-    }
+    String SKAMPI_TEST_NAMES = "test-names";
 
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String toString() {
-        return name;
-    }
 }

@@ -1,15 +1,17 @@
 package com.dmitryoskin.parallel.core;
 
+import com.dmitryoskin.parallel.generator.Generators;
 import com.dmitryoskin.parallel.parser.Parsers;
 
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toMap;
 
 /**
  *
@@ -149,7 +151,7 @@ public class Util {
     }
 
     public static void parseAndSaveData(Path path) throws IOException {
-        Map<Param, String> result = Parsers.parse(path);
+        Map<String, String> result = Parsers.parse(path);
 
         Path parent = path.getParent();
         String fileName = path.getFileName().toString();
@@ -163,11 +165,48 @@ public class Util {
 
         PrintWriter out = new PrintWriter(
                 Files.newBufferedWriter(resultFile, Charset.forName("UTF-8"), StandardOpenOption.WRITE));
-        for (Map.Entry<Param, String> entry : result.entrySet()) {
-            out.println(entry.getKey().getName() + "=" + entry.getValue());
+        for (Map.Entry<String, String> entry : result.entrySet()) {
+            out.println(entry.getKey() + "=" + entry.getValue());
         }
 
         out.flush();
         out.close();
+    }
+
+    public static List<GraphData> extractGraphData(File[] files) {
+        List<GraphData> result = new ArrayList<>();
+
+        Stream.of(files)
+            .map(File::toPath)
+            .forEach(file -> {
+                try {
+                    Map<String, String> params =
+                        Files.newBufferedReader(file)
+                            .lines()
+                            .collect(toMap(
+                                    s -> s.substring(0, s.indexOf('=')),
+                                    s -> s.substring(s.indexOf('=') + 1)));
+
+                    result.addAll(Generators.generate(params, file));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+
+
+        if (TestType.SCALAPACK.equals(TestType.fromPath(files[0].toPath()))) {
+            GraphData graphData =
+                    result.stream()
+                        .reduce((r1, r2) -> r1.merge(r2))
+                        .get();
+            result.clear();
+            result.add(graphData);
+        }
+
+        return result;
+    }
+
+    public static StringJoiner joiner() {
+        return new StringJoiner(",");
     }
 }

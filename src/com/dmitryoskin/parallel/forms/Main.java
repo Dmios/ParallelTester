@@ -1,5 +1,6 @@
 package com.dmitryoskin.parallel.forms;
 
+import com.dmitryoskin.parallel.core.GraphData;
 import com.dmitryoskin.parallel.core.TestType;
 import com.dmitryoskin.parallel.core.UserSet;
 import com.dmitryoskin.parallel.core.Util;
@@ -192,6 +193,7 @@ public class Main extends javax.swing.JFrame {
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
         chooseFileMenuItem = new javax.swing.JMenuItem();
+        generateGraph = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -352,6 +354,11 @@ public class Main extends javax.swing.JFrame {
 
         chooseFileMenuItem.addActionListener(this::chooseFileMenuItemActionPerformed);
 
+        generateGraph.setText("Сформировать график");
+        jMenu1.add(generateGraph);
+
+        generateGraph.addActionListener(this::generateGraphActionPerformed);
+
         jMenuItem1.setText("Выход");
         jMenu1.add(jMenuItem1);
 
@@ -368,6 +375,7 @@ public class Main extends javax.swing.JFrame {
     private void chooseFileMenuItemActionPerformed(ActionEvent e) {
         JFileChooser chooser = new JFileChooser(Util.getResultsPath());
         chooser.setMultiSelectionEnabled(true);
+        chooser.setDialogTitle("Выбрать файлы с результатами тестирования");
         chooser.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File f) {
@@ -400,6 +408,42 @@ public class Main extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this,
                         "Файлы обработаны успешно",
                         "Результат", JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+    }
+
+    private void generateGraphActionPerformed(ActionEvent evt) {
+        JFileChooser chooser = new JFileChooser(Util.getResultsPath());
+        chooser.setMultiSelectionEnabled(true);
+        chooser.setDialogTitle("Выбрать файл(ы) для формирования графика");
+        chooser.setFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                return f.getName().endsWith(".prf") || f.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "Файлы с обработанными данными";
+            }
+        });
+
+        if (chooser.showDialog(this, "Ок") == JFileChooser.APPROVE_OPTION) {
+            boolean success = true;
+
+            try {
+                List<GraphData> graphData = Util.extractGraphData(chooser.getSelectedFiles());
+
+                graphData.forEach(data -> {
+
+                });
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                success = false;
+                JOptionPane.showMessageDialog(this,
+                        "Ошибка при разборе файлов",
+                        "Ошибка", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -609,6 +653,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem chooseFileMenuItem;
+    private javax.swing.JMenuItem generateGraph;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
