@@ -10,6 +10,8 @@ public interface Param {
     String PROCESS_COUNT = "process-count";
     String JVM_TIME ="jvm-time";
     String TEST_NAME = "test-name";
+    String SPEC_PARAM = "Spec param";
+    String LINE_NAME = "line-name";
 
     /** Scalapack base test */
     String SP_WALL_CLOCK = "wall-clock";

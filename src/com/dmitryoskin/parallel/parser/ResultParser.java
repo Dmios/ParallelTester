@@ -19,6 +19,7 @@ public interface ResultParser {
     /** Common parse indexed */
     int PROCESS_COUNT_INDEX = 5;
     int JVM_TIME_INDEX = 5;
+    int TEST_NAME_INDEX = 9;
 
     String WARMUP = "Warming Up...";
     String END_OF_TEST = "Test complete";

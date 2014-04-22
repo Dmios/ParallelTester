@@ -15,9 +15,17 @@ public class GraphData {
 
     private String name;
 
+    private String xAxisLabel;
+
+    private String yAxisLabel;
+
     private List<Double> x;
 
     private List<Double> y;
+
+    private TestType type;
+
+    private String lineName;
 
     public GraphData() {}
 
@@ -27,6 +35,16 @@ public class GraphData {
         this.y = y;
     }
 
+    public GraphData(String name, String xAxisLabel, String yAxisLabel,
+                     List<Double> x, List<Double> y, TestType type, String lineName) {
+        this.name = name;
+        this.xAxisLabel = xAxisLabel;
+        this.yAxisLabel = yAxisLabel;
+        this.x = x;
+        this.y = y;
+        this.type = type;
+        this.lineName = lineName;
+    }
 
     public GraphData merge(GraphData data) {
         if (data != null) {
@@ -51,6 +69,22 @@ public class GraphData {
         this.name = name;
     }
 
+    public String getXAxisLabel() {
+        return xAxisLabel;
+    }
+
+    public void setXAxisLabel(String xAxisLabel) {
+        this.xAxisLabel = xAxisLabel;
+    }
+
+    public String getYAxisLabel() {
+        return yAxisLabel;
+    }
+
+    public void setYAxisLabel(String yAxisLabel) {
+        this.yAxisLabel = yAxisLabel;
+    }
+
     public List<Double> getY() {
         return y;
     }
@@ -67,4 +101,19 @@ public class GraphData {
         this.x = x;
     }
 
+    public TestType getType() {
+        return type;
+    }
+
+    public void setType(TestType type) {
+        this.type = type;
+    }
+
+    public String getLineName() {
+        return lineName;
+    }
+
+    public void setLineName(String lineName) {
+        this.lineName = lineName;
+    }
 }

@@ -11,6 +11,7 @@ import java.util.*;
 
 import static com.dmitryoskin.parallel.core.Param.JVM_TIME;
 import static com.dmitryoskin.parallel.core.Param.PROCESS_COUNT;
+import static com.dmitryoskin.parallel.core.Param.TEST_NAME;
 
 /**
  * @author Dmitry Oskin
@@ -28,12 +29,15 @@ public class BaseResultParser implements ResultParser {
 
         String[] configParams = configuration.split(" ");
         String processCount = configParams[PROCESS_COUNT_INDEX];
+        String testName = configParams[TEST_NAME_INDEX];
+        testName = testName.substring(testName.lastIndexOf('/') + 1);
 
         String jvmTime = text.get(JVM_TIME_LINE).split(" ")[JVM_TIME_INDEX];
 
         Map<String, String> result = new LinkedHashMap<>();
         result.put(PROCESS_COUNT, processCount);
         result.put(JVM_TIME, jvmTime);
+        result.put(TEST_NAME, testName);
 
         return result;
     }

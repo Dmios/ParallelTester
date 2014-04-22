@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.util.Map;
 
 import static com.dmitryoskin.parallel.core.Param.SP_WALL_CLOCK;
+import static com.dmitryoskin.parallel.core.Param.TEST_NAME;
 
 /**
  *
@@ -19,7 +20,9 @@ public class ScalapackResultParser extends BaseResultParser {
     public Map<String, String> parse(Path input) throws IOException {
         Map<String, String> result = super.parse(input);
 
-        result.put(Param.TEST_NAME, "base");
+        String key = String.format("[%s]", result.get(TEST_NAME));
+        result.put(key + "x", "Process count");
+        result.put(key + "y", "Execution Time (sec)");
 
         for (String line : text) {
             if (line.contains("wall clock time")) {

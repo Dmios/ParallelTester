@@ -4,6 +4,13 @@ import com.dmitryoskin.parallel.core.GraphData;
 import com.dmitryoskin.parallel.core.TestType;
 import com.dmitryoskin.parallel.core.UserSet;
 import com.dmitryoskin.parallel.core.Util;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartFrame;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
@@ -433,10 +440,37 @@ public class Main extends javax.swing.JFrame {
 
             try {
                 List<GraphData> graphData = Util.extractGraphData(chooser.getSelectedFiles());
+                XYSeriesCollection dataset = new XYSeriesCollection();
 
                 graphData.forEach(data -> {
+                    XYSeries xy = new XYSeries(data.getLineName());
+                    List<Double> x = data.getX();
+                    List<Double> y = data.getY();
 
+                    for (int i = 0; i < x.size(); i++) {
+                        xy.add(x.get(i), y.get(i));
+                    }
+
+                    dataset.addSeries(xy);
                 });
+
+                GraphData example = graphData.stream().findFirst().get();
+
+
+                JFreeChart chart = ChartFactory.createXYLineChart(
+                        example.getName(),
+                        example.getXAxisLabel(),
+                        example.getYAxisLabel(),
+                        dataset,
+                        PlotOrientation.VERTICAL,
+                        true,
+                        true,
+                        false
+                );
+
+                ChartFrame frame = new ChartFrame(example.getType().toString(), chart);
+                frame.pack();
+                frame.setVisible(true);
 
             } catch (Exception ex) {
                 ex.printStackTrace();

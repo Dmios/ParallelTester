@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.*;
 
 import com.dmitryoskin.parallel.core.GraphData;
 import com.dmitryoskin.parallel.core.Param;
+import com.dmitryoskin.parallel.core.TestType;
 import com.dmitryoskin.parallel.generator.GraphDataGenerator;
 
 import java.util.List;
@@ -19,6 +20,10 @@ public class SkampiGraphDataGenerator implements GraphDataGenerator {
     @Override
     public GraphData generate(Map<String, String> params, String testName) {
         String key = String.format("[%s]", testName);
+        String name = params.get(Param.TEST_NAME);
+
+        String xLabel = params.get(key + "x");
+        String yLabel = params.get(key + "y");
 
         List<Double> x =
                 Stream.of(params.get(key + "count").split(","))
@@ -30,6 +35,6 @@ public class SkampiGraphDataGenerator implements GraphDataGenerator {
                         .map(Double::parseDouble)
                         .collect(toList());
 
-        return new GraphData(testName, x, y);
+        return new GraphData(name, xLabel, yLabel, x, y, TestType.SKAMPI, testName);
     }
 }

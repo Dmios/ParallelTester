@@ -34,11 +34,20 @@ public class SkampiResultParser extends BaseResultParser {
         List<String> tests = new ArrayList<>();
         StringJoiner sizes = joiner(), values = joiner();
 
+        String configuration = text.get(CONFIGURATION_LINE);
+        String[] configParams = configuration.split(" ");
+        String testName = configParams[11];
+        testName = testName.substring(testName.lastIndexOf('/') + 1, testName.length() - 4);
+        result.put(Param.TEST_NAME, testName);
+
         for (String line : text) {
             if (line.startsWith(START_TEST)) {
                 tests.add(line.substring(START_TEST.length() + 1, line.length() - 1));
             } else if (line.startsWith(END_TEST)) {
                 String key = String.format("[%s]", tests.get(tests.size() - 1));
+
+                result.put(key + "x", "Bytes send");
+                result.put(key + "y", "Latency (us)");
 
                 result.put(key + "count", sizes.toString());
                 result.put(key + "latency", values.toString());
