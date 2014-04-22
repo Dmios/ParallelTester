@@ -166,7 +166,6 @@ public class Main extends javax.swing.JFrame {
     }
 
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
@@ -202,6 +201,7 @@ public class Main extends javax.swing.JFrame {
         chooseFileMenuItem = new javax.swing.JMenuItem();
         generateGraph = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
+        aboutMenuItem = new JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Тестер распределенной вычислительной сети");
@@ -356,7 +356,7 @@ public class Main extends javax.swing.JFrame {
 
         jMenu1.setText("Файл");
 
-        chooseFileMenuItem.setText("Выбрать файл(ы)");
+        chooseFileMenuItem.setText("Обработать результаты");
         jMenu1.add(chooseFileMenuItem);
 
         chooseFileMenuItem.addActionListener(this::chooseFileMenuItemActionPerformed);
@@ -367,17 +367,24 @@ public class Main extends javax.swing.JFrame {
         generateGraph.addActionListener(this::generateGraphActionPerformed);
 
         jMenuItem1.setText("Выход");
+        jMenuItem1.addActionListener(this::exit);
+
         jMenu1.add(jMenuItem1);
 
         jMenuBar1.add(jMenu1);
 
-        jMenu2.setText("Правка");
+        jMenu2.setText("О программе");
         jMenuBar1.add(jMenu2);
+
+        aboutMenuItem.setText("О программе...");
+        aboutMenuItem.addActionListener(this::aboutActionPerformed);
+
+        jMenu2.add(aboutMenuItem);
 
         setJMenuBar(jMenuBar1);
 
         pack();
-    }// </editor-fold>//GEN-END:initComponents
+    }
 
     private void chooseFileMenuItemActionPerformed(ActionEvent e) {
         JFileChooser chooser = new JFileChooser(Util.getResultsPath());
@@ -651,6 +658,15 @@ public class Main extends javax.swing.JFrame {
         }
     }
 
+    private void aboutActionPerformed(ActionEvent event) {
+        JOptionPane.showMessageDialog(this, "Тестер распределенной вычислительной системы\nАвтор: Дмитрий Оськин\n2014",
+                "О программе", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void exit(ActionEvent event) {
+        System.exit(0);
+    }
+
     private void processCountSpnStateChanged(javax.swing.event.ChangeEvent evt) {
         saveUserSetBtn.setEnabled(true);
     }
@@ -688,6 +704,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem chooseFileMenuItem;
     private javax.swing.JMenuItem generateGraph;
+    private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
