@@ -8,16 +8,21 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartFrame;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.RefineryUtilities;
 
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,10 +30,12 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  *
@@ -44,6 +51,7 @@ public class Main extends javax.swing.JFrame {
     private static String TEST_COMMAND_META_FILE = "test.sh";
     private UserSet set;
 
+    @SuppressWarnings("unchecked")
     public Main() {
         initComponents();
 
@@ -55,21 +63,15 @@ public class Main extends javax.swing.JFrame {
 
             processCountSpn.setValue(set.getProcessCount());
 
-//            File testsDir = new File(Util.getTestsPath());
-//            File[] dirs = testsDir.listFiles();
-//            Arrays.sort(dirs, new Comparator<File>() {
-//                @Override
-//                public int compare(File o1, File o2) {
-//                    return o1.getName().compareTo(o2.getName());
-//                }
-//            
-//            });
-//            
-//            for (File testDir : dirs) {
-//                if (testDir.isDirectory()) {
-//                    cmbTestType.addItem(testDir.getName());
-//                }
-//            }
+            File testsDir = new File(Util.getTestsPath());
+            List<File> dirs =
+                Stream.of(testsDir.listFiles())
+                    .sorted((f1, f2) -> f1.getName().compareTo(f2.getName()))
+                    .collect(toList());
+
+            dirs.stream()
+                .filter(File::isDirectory)
+                .forEach(d -> cmbTestType.addItem(d.getName()));
 
             hostsTable.getModel().addTableModelListener(e -> saveUserSetBtn.setEnabled(true));
 
@@ -285,6 +287,8 @@ public class Main extends javax.swing.JFrame {
         descriptionTxt.setRows(5);
         descriptionTxt.setMinimumSize(new java.awt.Dimension(350, 100));
         descriptionTxt.setPreferredSize(new java.awt.Dimension(350, 100));
+        descriptionTxt.setWrapStyleWord(true);
+
         jScrollPane2.setViewportView(descriptionTxt);
 
         jPanel4.add(jScrollPane2);
@@ -475,8 +479,17 @@ public class Main extends javax.swing.JFrame {
                         false
                 );
 
+                XYPlot plot = chart.getXYPlot();
+
+                XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
+                renderer.setBaseShapesVisible(true);
+                renderer.setBaseShapesFilled(true);
+                renderer.setUseFillPaint(true);
+
                 ChartFrame frame = new ChartFrame(example.getType().toString(), chart);
                 frame.pack();
+
+                RefineryUtilities.centerFrameOnScreen(frame);
                 frame.setVisible(true);
 
             } catch (Exception ex) {
@@ -639,20 +652,21 @@ public class Main extends javax.swing.JFrame {
     }
 
     private void chosenTestCmbActionPerformed(java.awt.event.ActionEvent evt) {
-        File testDir = new File(Util.getTestsPath() + chosenTestCmb.getSelectedItem());
-        File[] descriptions = testDir.listFiles(DESCRIPTION_FILTER);
+        descriptionTxt.setText(EMPTY);
+        String testName = (String) chosenTestCmb.getSelectedItem();
 
-        if (descriptions != null && descriptions.length > 0) {
-            File description = descriptions[0];
-            descriptionTxt.setText(EMPTY);
+        Path description =
+                Paths.get(Util.getTestsPath(),
+                (String) cmbTestType.getSelectedItem(),
+                testName + ".description");
+
+        if (description != null) {
             try {
-                Scanner sc = new Scanner(new FileInputStream(description));
                 StringBuilder builder = new StringBuilder();
-                while (sc.hasNextLine()) {
-                    builder.append(sc.nextLine()).append('\n');
-                }
+                Files.lines(description).forEach(s -> builder.append(s).append('\n'));
+
                 descriptionTxt.setText(builder.toString());
-            } catch (FileNotFoundException ex) {
+            } catch (IOException ex) {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
